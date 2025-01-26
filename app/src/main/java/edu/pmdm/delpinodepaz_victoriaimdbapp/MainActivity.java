@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
@@ -28,16 +29,31 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private Button btnLogOut;
+    private TextView txtEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            // Usuario autenticado
+            Log.d("NavigationDrawer", "Usuario: " + currentUser.getEmail());
+        } else {
+            // Redirigir al SignInActivity
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -56,13 +72,18 @@ public class MainActivity extends AppCompatActivity {
         // Buscamos el botón dentro del header
         btnLogOut = headerView.findViewById(R.id.btnLogOut);
 
-
+        if(currentUser!=null) {
+            //meter nombre e imagen
+            txtEmail = headerView.findViewById(R.id.txtEmail);
+            txtEmail.setText(currentUser.getEmail());
+        }
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Toast.makeText(MainActivity.this, "x", Toast.LENGTH_SHORT).show();
                 mAuth.signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                finish();
             }
         });
     }
@@ -85,17 +106,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        mAuth = FirebaseAuth.getInstance();
 
-        currentUser = mAuth.getCurrentUser();
-
-        if (currentUser != null) {
-            // Usuario autenticado
-            Log.d("NavigationDrawer", "Usuario: " + currentUser.getEmail());
-        } else {
-            // Redirigir al SignInActivity
-            startActivity(new Intent(this, LoginActivity.class));
-            finish();
-        }
     }
 }
