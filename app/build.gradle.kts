@@ -1,3 +1,5 @@
+import org.apache.tools.ant.util.JavaEnvUtils.VERSION_1_6
+
 plugins {
 
     alias(libs.plugins.android.application)
@@ -29,7 +31,7 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
+
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     buildFeatures {
@@ -54,4 +56,8 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     implementation("com.google.firebase:firebase-analytics")
-}
+// Firebase Authentication
+    implementation("com.google.firebase:firebase-auth")
+
+// Google Sign-In y One Tap
+    implementation("com.google.android.gms:play-services-auth:20.6.0")}
