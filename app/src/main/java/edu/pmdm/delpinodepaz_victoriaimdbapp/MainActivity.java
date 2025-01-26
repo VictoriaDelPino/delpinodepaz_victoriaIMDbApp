@@ -1,11 +1,14 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +23,12 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.ActivityMainBinding;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.test.TestApi;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,12 +38,14 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private Button btnLogOut;
     private TextView txtEmail;
+    private TextView txtUserName;
+    private ImageView imgUserPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
+        TestApi.test();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -71,21 +81,51 @@ public class MainActivity extends AppCompatActivity {
 
         // Buscamos el botón dentro del header
         btnLogOut = headerView.findViewById(R.id.btnLogOut);
+        txtEmail = headerView.findViewById(R.id.txtEmail);
+        txtUserName = headerView.findViewById(R.id.txtUserName);
+        imgUserPhoto = headerView.findViewById(R.id.imgUserPhoto);
 
         if(currentUser!=null) {
             //meter nombre e imagen
-            txtEmail = headerView.findViewById(R.id.txtEmail);
+
             txtEmail.setText(currentUser.getEmail());
+            txtUserName.setText(currentUser.getDisplayName());
+            // Descargar y establecer la imagen de forma asincrónica
+            new Thread(() -> {
+                Bitmap bitmap = downloadImage(currentUser.getPhotoUrl().toString());
+                runOnUiThread(() -> {
+                    if (bitmap != null) {
+                        imgUserPhoto.setImageBitmap(bitmap);
+                    } else {
+                        imgUserPhoto.setImageResource(R.drawable.ic_launcher_foreground); // Imagen por defecto
+                    }
+                });
+            }).start();
         }
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "x", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
                 mAuth.signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
             }
         });
+    }
+
+    private Bitmap downloadImage(String urlString) {
+        Bitmap bitmap = null;
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            bitmap = BitmapFactory.decodeStream(input);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
     @Override
@@ -102,10 +142,4 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-
-    }
 }
