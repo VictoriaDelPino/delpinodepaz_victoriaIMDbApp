@@ -27,8 +27,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiIMBD;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.ActivityMainBinding;
-import edu.pmdm.delpinodepaz_victoriaimdbapp.test.TestApi;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        TestApi.test();
+        ApiIMBD.getTop10Movie();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
