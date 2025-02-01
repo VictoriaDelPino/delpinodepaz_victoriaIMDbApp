@@ -28,26 +28,14 @@
         app:layout_constraintStart_toStartOf="@+id/imgMoviePhoto"
         app:layout_constraintTop_toBottomOf="@+id/imgMoviePhoto" />
 
-    <EditText
-        android:id="@+id/txtMovieDescription"
-        android:layout_width="350dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="12dp"
-        android:ems="10"
-        android:gravity="start|top"
-        android:inputType="textMultiLine"
-        app:layout_constraintEnd_toEndOf="@+id/imgMoviePhoto"
-        app:layout_constraintStart_toStartOf="@+id/txtMovieTitle"
-        app:layout_constraintTop_toBottomOf="@+id/txtMovieTitle" />
-
     <TextView
         android:id="@+id/txtReleaseDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:text="TextView"
-        app:layout_constraintStart_toStartOf="@+id/txtMovieDescription"
-        app:layout_constraintTop_toBottomOf="@+id/txtMovieDescription" />
+        app:layout_constraintStart_toStartOf="@+id/txtDescription"
+        app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
     <TextView
         android:id="@+id/txtRating"
@@ -68,4 +56,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.878" />
+
+    <TextView
+        android:id="@+id/txtDescription"
+        android:layout_width="345dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/txtMovieTitle"
+        app:layout_constraintTop_toBottomOf="@+id/txtMovieTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

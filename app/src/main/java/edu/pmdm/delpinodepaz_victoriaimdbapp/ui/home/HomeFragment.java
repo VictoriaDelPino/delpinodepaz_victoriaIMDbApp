@@ -1,5 +1,6 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiIMBD;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.MovieActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MyItemRecycleViewAdapter;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.FragmentHomeBinding;
@@ -57,6 +59,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(Movie movie) {
                 Toast.makeText(getContext(), "Clic en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), MovieActivity.class);
+                intent.putExtra("movie", movie);
+                startActivity(intent);
             }
 
             @Override
