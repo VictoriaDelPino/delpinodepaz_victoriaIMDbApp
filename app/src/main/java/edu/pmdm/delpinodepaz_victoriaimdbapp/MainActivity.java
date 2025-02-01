@@ -26,8 +26,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiIMBD;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.ActivityMainBinding;
 
 
@@ -42,11 +44,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtUserName;
     private ImageView imgUserPhoto;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        ApiIMBD.getTop10Movie();
+
+        //ApiIMBD.getTop10Movie();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
