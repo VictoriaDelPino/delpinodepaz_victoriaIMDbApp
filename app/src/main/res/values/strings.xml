@@ -14,4 +14,11 @@
     <string name="default_web_client_id">588017598115-capibnubrjuokdk60ujkqv6d7elshha3.apps.googleusercontent.com</string>
     <string name="logout">Cerrar sesión</string>
     <string name="send_SMS">Enviar por SMS</string>
+
+    <string name="search">Buscar</string>
+    <string name="released_date">Estreno: </string>
+    <string name="rating">Rating: </string>
+
+
+
 </resources>
