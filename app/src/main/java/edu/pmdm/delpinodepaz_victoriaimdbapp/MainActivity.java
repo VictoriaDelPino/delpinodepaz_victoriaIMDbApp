@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //ApiIMBD.getTop10Movie();
-        TestApiTMDB.getSearchedList();
+        TestApiTMDB.getSearchedList("2003","12");
 
         DBManager.init(this);
 

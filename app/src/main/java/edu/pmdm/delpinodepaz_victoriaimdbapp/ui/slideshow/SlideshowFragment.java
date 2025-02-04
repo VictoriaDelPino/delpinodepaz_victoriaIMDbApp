@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +29,12 @@ public class SlideshowFragment extends Fragment {
 
     private FragmentSlideshowBinding binding;
     private List<Genre> genreObjectList;
-    private List <String> genreList;
+    private List<String> genreList;
     private Spinner genreSpinner;
+    private Button btnSearch;
+    private Genre selectedGenre;
+    private EditText txtYear;
+    private String year;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -38,25 +44,24 @@ public class SlideshowFragment extends Fragment {
         binding = FragmentSlideshowBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        //final TextView textView = binding.eTxtYear;
-        //slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-
-        // Asignar el Spinner del XML
+        btnSearch = binding.btnSearch;
         genreSpinner = binding.spinnerGenre;
+        txtYear=binding.eTxtYear;
+
+
+
 
         // Obtener la lista de géneros desde la API
         genreObjectList = ApiTMDB.getGenre();
-        genreList=new ArrayList<>();
-
+        genreList = new ArrayList<>();
 
         // Agregar un elemento por defecto como primer elemento de la lista
         genreList.add(0, "Selecciona un género");
-        for (int i =0;i<genreObjectList.size();i++){
-            String genre=genreObjectList.get(i).getGenreName();
-            //por que no entra aqui y luego no saca la lista?
-            Log.d("TMDB_",genre);
-            genreList.add(genre);
+        for (Genre genre : genreObjectList) {
+            Log.d("TMDB_", genre.getGenreName());
+            genreList.add(genre.getGenreName());
         }
+
         // Configurar el adaptador para el Spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(),
@@ -64,25 +69,61 @@ public class SlideshowFragment extends Fragment {
                 genreList
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         genreSpinner.setAdapter(adapter);
 
-        // Configurar el listener para evitar que el usuario seleccione el primer elemento
+        // Configurar el listener para el Spinner
         genreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-                    // Si selecciona "Selecciona un género", no hacer nada
                     ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY); // Opcional: ponerlo en gris
+                    selectedGenre = null;
                 } else {
-                    // Mostrar la opción seleccionada
-                    String selectedGenre = genreList.get(position);
-                    Toast.makeText(requireContext(), "Seleccionaste: " + selectedGenre, Toast.LENGTH_SHORT).show();
+                    String selectedGenreName = genreList.get(position);
+                    for (Genre g : genreObjectList) {
+                        if (g.getGenreName().equals(selectedGenreName)) {
+                            selectedGenre = g;
+                            break;
+                        }
+                    }
+                    if (selectedGenre != null) {
+                        Toast.makeText(requireContext(), "Seleccionaste: " + selectedGenre.getGenreName(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Configurar el botón para obtener el ID del género seleccionado
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedGenre != null) {
+                    try {
+                        year = txtYear.getText().toString().trim(); // Convertimos a String y eliminamos espacios
+                        int yearInt = Integer.parseInt(year);
+                        int currentYear = java.time.Year.now().getValue();
+
+                        if (yearInt >= 1888 && yearInt <= currentYear) {
+                            Toast.makeText(requireContext(), "ID del género seleccionado: " + selectedGenre.getId(), Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(requireContext(), "Año válido: " + year, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(requireContext(), "El año debe estar entre 1888 y " + currentYear, Toast.LENGTH_SHORT).show();
+
+                        }
+
+                    } catch (Exception e) {
+                        Toast.makeText(requireContext(), "Ocurrió un error al procesar el año.", Toast.LENGTH_SHORT).show();
+
+                    }
+
+                } else {
+                    Toast.makeText(requireContext(), "Por favor, selecciona un género válido", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
 
         return root;
