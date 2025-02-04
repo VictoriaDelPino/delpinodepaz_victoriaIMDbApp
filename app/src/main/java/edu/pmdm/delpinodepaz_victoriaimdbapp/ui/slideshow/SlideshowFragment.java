@@ -1,5 +1,6 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp.ui.slideshow;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiTMDB;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Genre;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.SearchResultActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.FragmentSlideshowBinding;
 
 public class SlideshowFragment extends Fragment {
@@ -46,10 +48,7 @@ public class SlideshowFragment extends Fragment {
 
         btnSearch = binding.btnSearch;
         genreSpinner = binding.spinnerGenre;
-        txtYear=binding.eTxtYear;
-
-
-
+        txtYear = binding.eTxtYear;
 
         // Obtener la lista de géneros desde la API
         genreObjectList = ApiTMDB.getGenre();
@@ -76,7 +75,7 @@ public class SlideshowFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
-                    ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY); // Opcional: ponerlo en gris
+                    ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                     selectedGenre = null;
                 } else {
                     String selectedGenreName = genreList.get(position);
@@ -86,9 +85,6 @@ public class SlideshowFragment extends Fragment {
                             break;
                         }
                     }
-                    if (selectedGenre != null) {
-                        Toast.makeText(requireContext(), "Seleccionaste: " + selectedGenre.getGenreName(), Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
 
@@ -96,30 +92,28 @@ public class SlideshowFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Configurar el botón para obtener el ID del género seleccionado
+        // Configurar el botón para iniciar la actividad de búsqueda
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (selectedGenre != null) {
                     try {
-                        year = txtYear.getText().toString().trim(); // Convertimos a String y eliminamos espacios
+                        year = txtYear.getText().toString().trim();
                         int yearInt = Integer.parseInt(year);
                         int currentYear = java.time.Year.now().getValue();
 
                         if (yearInt >= 1888 && yearInt <= currentYear) {
-                            Toast.makeText(requireContext(), "ID del género seleccionado: " + selectedGenre.getId(), Toast.LENGTH_SHORT).show();
-
-                            Toast.makeText(requireContext(), "Año válido: " + year, Toast.LENGTH_SHORT).show();
+                            // Crear el Intent para iniciar SearchResultActivity
+                            Intent intent = new Intent(requireContext(), SearchResultActivity.class);
+                            intent.putExtra("GENRE_ID", selectedGenre.getId());
+                            intent.putExtra("YEAR", year);
+                            startActivity(intent);
                         } else {
                             Toast.makeText(requireContext(), "El año debe estar entre 1888 y " + currentYear, Toast.LENGTH_SHORT).show();
-
                         }
-
                     } catch (Exception e) {
                         Toast.makeText(requireContext(), "Ocurrió un error al procesar el año.", Toast.LENGTH_SHORT).show();
-
                     }
-
                 } else {
                     Toast.makeText(requireContext(), "Por favor, selecciona un género válido", Toast.LENGTH_SHORT).show();
                 }

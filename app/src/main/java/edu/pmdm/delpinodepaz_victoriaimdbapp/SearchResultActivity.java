@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiTMDB;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 
 public class SearchResultActivity extends AppCompatActivity {
@@ -35,11 +36,38 @@ public class SearchResultActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Obtener datos del Intent
+        Intent intent = getIntent();
+        if (intent != null) {
+            int genreId = intent.getIntExtra("GENRE_ID", -1);
+            String year = intent.getStringExtra("YEAR");
+
+            if (genreId != -1 && year != null) {
+                Log.d("SearchResultActivity", "Recibido Genre ID: " + genreId + ", Año: " + year);
+
+                // Obtener la lista de películas y evitar NullPointerException
+                movieList = ApiTMDB.getSearchedList(year, String.valueOf(genreId));
+                if (movieList == null) {
+                    movieList = new ArrayList<>();
+                    Log.e("SearchResultActivity", "API devolvió null, inicializando lista vacía");
+                }
+
+                Log.d("Victoria__recyclerview", "Tamaño de movieList: " + movieList.size());
+
+            } else {
+                Log.e("SearchResultActivity", "Datos inválidos recibidos");
+                movieList = new ArrayList<>();
+            }
+        } else {
+            Log.e("SearchResultActivity", "Intent nulo");
+            movieList = new ArrayList<>();
+        }
+
         setupRecyclerView();
     }
 
     private void setupRecyclerView() {
-        // Inicializar lista si es null
+        // Inicializar lista si es null (precaución adicional)
         if (movieList == null) {
             movieList = new ArrayList<>();
         }
