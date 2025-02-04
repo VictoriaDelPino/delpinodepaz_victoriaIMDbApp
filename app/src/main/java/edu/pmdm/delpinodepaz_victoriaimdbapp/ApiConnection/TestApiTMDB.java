@@ -17,14 +17,21 @@ import java.util.concurrent.Executors;
 
 
 public class TestApiTMDB {
-    private static final String API_URL = "https://api.themoviedb.org/3/genre/movie/list?language=es";
+    private static  String API_URL;
     private static final String API_KEY = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjNDg2M2FmMGIxNTA3MzVjYjMyYjQwOTNiY2E0YTBiZCIsIm5iZiI6MTczODQzNjcxOC40NzMsInN1YiI6IjY3OWU3MDZlYTFlMzNjNDA4YTI2MWNhYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LqxvWm0e_oI1DS7NAM1djVEWHw89rD_p7TXhbE8FSI0"; // Reemplázalo con tu token válido
     private static final ExecutorService executorServiceTMDB = Executors.newFixedThreadPool(5);
     private static final List<String> genreList = new ArrayList<>();
 
-    public static ArrayList<String> getGenre() {
+    public static ArrayList<String> getSearchedList() {
         executorServiceTMDB.execute(() -> {
-
+            String year = "2019";   // Año de estreno
+            String genre = "14";
+            API_URL= "https://api.themoviedb.org/3/discover/movie?"
+                    + "primary_release_year=" + year
+                    + "&with_genres=" + genre
+                    + "&include_adult=false"
+                    + "&language=es-ES"
+                    + "&page=1";
             HttpURLConnection connection = null;
             try {
                 URL url = new URL(API_URL);
@@ -49,14 +56,16 @@ public class TestApiTMDB {
 
                     // Convertir la respuesta a un JSONObject
                     JSONObject jsonObject = new JSONObject(response.toString());
-                    JSONArray genresArray = jsonObject.getJSONArray("genres");
+                    //int movieObject = jsonObject.getInt("page");
+                  JSONArray moviesArray = jsonObject.getJSONArray("results");
 
-                    // Iterar sobre los géneros y extraer los nombres
-                    for (int i = 0; i < genresArray.length(); i++) {
-                        JSONObject genreObject = genresArray.getJSONObject(i);
-                        String genreName = genreObject.getString("name");
+                     // Iterar sobre los géneros y extraer los nombres
+                    for (int i = 0; i < moviesArray.length(); i++) {
+                        JSONObject movieObject = moviesArray.getJSONObject(i);
+                        Log.d("TMDB", movieObject.toString());
+                       /* String genreName = genreObject.getString("name");
                         genreList.add(genreName);
-                        Log.d("TMDB", "Género: " + genreName);
+                        Log.d("TMDB", "Género: " + genreName);*/
                     }
                 } else {
                     Log.e("TMDB", "Error en la API: Código " + responseCode);

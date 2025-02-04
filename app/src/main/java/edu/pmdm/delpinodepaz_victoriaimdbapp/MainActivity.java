@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.TestApiTMDB;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.ActivityMainBinding;
 
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //ApiIMBD.getTop10Movie();
-        //TestApiTMDB.getGenre();
+        TestApiTMDB.getSearchedList();
 
         DBManager.init(this);
 
