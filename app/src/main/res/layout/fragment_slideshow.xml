@@ -23,6 +23,7 @@
         android:layout_width="286dp"
         android:layout_height="62dp"
         android:layout_marginTop="24dp"
+        android:autofillHints="@string/genre"
         app:layout_constraintStart_toStartOf="@+id/eTxtYear"
         app:layout_constraintTop_toBottomOf="@+id/eTxtYear" />
 

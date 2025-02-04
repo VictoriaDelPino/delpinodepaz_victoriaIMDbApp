@@ -1,5 +1,7 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp.ui.gallery;
 
+import static edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager.deleteUserFavorite;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +17,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MovieActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MyItemRecycleViewAdapter;
@@ -28,14 +34,23 @@ public class GalleryFragment extends Fragment {
     private MyItemRecycleViewAdapter adapter;
     private List<Movie> movieList;
     private FragmentGalleryBinding binding;
-
+    private String userEmail;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         GalleryViewModel galleryViewModel =
                 new ViewModelProvider(this).get(GalleryViewModel.class);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        userEmail = currentUser.getEmail();
         binding = FragmentGalleryBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        try {
+            movieList=DBManager.getUserFavorites(userEmail);
+        } catch (Exception e) {
+
+
+            Log.e("Database_", "Error en DB", e);
+        }
 
         //final TextView textView = binding.textGallery;
 
@@ -56,27 +71,33 @@ public class GalleryFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         adapter = new MyItemRecycleViewAdapter(movieList, getContext(), new MyItemRecycleViewAdapter.OnItemClickListener() {
+
             @Override
             public void onItemClick(Movie movie) {
+                movie.setRating("");
                 Toast.makeText(getContext(), "Clic en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
-
-                if (getActivity() != null) {
-                    Intent intent = new Intent(getActivity(), MovieActivity.class);
-                    intent.putExtra("movie", movie);
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(getActivity(), MovieActivity.class);
+                intent.putExtra("movie", movie);
+                startActivity(intent);
             }
 
             @Override
             public void onItemLongClick(Movie movie) {
-                Toast.makeText(getContext(), "Manteniendo: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                deleteUserFavorite(getContext(), userEmail, movie.getId());
+
+                // Eliminar la película de la lista
+                movieList.remove(movie);
+
+                // Notificar al adaptador del cambio
+                adapter.notifyDataSetChanged();
+
             }
         });
 
         recyclerView.setAdapter(adapter);
     }
 
-    @Override
+        @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
