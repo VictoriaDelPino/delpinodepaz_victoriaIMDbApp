@@ -1,5 +1,8 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection;
 
+
+
+
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -15,17 +18,20 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.R;
+
 
 public class TestApiTMDB {
     private static  String API_URL;
     private static final String API_KEY = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjNDg2M2FmMGIxNTA3MzVjYjMyYjQwOTNiY2E0YTBiZCIsIm5iZiI6MTczODQzNjcxOC40NzMsInN1YiI6IjY3OWU3MDZlYTFlMzNjNDA4YTI2MWNhYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.LqxvWm0e_oI1DS7NAM1djVEWHw89rD_p7TXhbE8FSI0"; // Reemplázalo con tu token válido
     private static final ExecutorService executorServiceTMDB = Executors.newFixedThreadPool(5);
-    private static final List<String> genreList = new ArrayList<>();
+    private static List<Movie> movieList;
 
-    public static ArrayList<String> getSearchedList() {
+    public static ArrayList<Movie> getSearchedList(String year, String genre) {
         executorServiceTMDB.execute(() -> {
-            String year = "2019";   // Año de estreno
-            String genre = "14";
+            movieList=new ArrayList<>();
+
             API_URL= "https://api.themoviedb.org/3/discover/movie?"
                     + "primary_release_year=" + year
                     + "&with_genres=" + genre
@@ -60,21 +66,31 @@ public class TestApiTMDB {
                   JSONArray moviesArray = jsonObject.getJSONArray("results");
 
                      // Iterar sobre los géneros y extraer los nombres
+                    Movie movie;
                     for (int i = 0; i < moviesArray.length(); i++) {
+                        movie=new Movie();
                         JSONObject movieObject = moviesArray.getJSONObject(i);
                     //    Log.d("TMDB_", movieObject.toString());
                         int idMovieInt= movieObject.getInt(("id"));
                         String idMovie=""+idMovieInt;
+                        movie.setId(idMovie);
                         Log.d("TMDB_"+i, idMovie);
                         String titleMovie= movieObject.getString(("title"));
+                        movie.setTitle(titleMovie);
                         Log.d("TMDB_"+i, titleMovie);
                         String releaseDate= movieObject.getString(("release_date"));
+                        movie.setReleaseDate(releaseDate);
                         Log.d("TMDB_"+i, releaseDate);
                         String posterPath= movieObject.getString(("poster_path"));
-                        Log.d("TMDB_"+i, posterPath);
+                        String photoURL="https://image.tmdb.org/t/p/w500"+posterPath;
+                        movie.setPhoto(photoURL);
+                        Log.d("TMDB_"+i, photoURL);
                         String overview= movieObject.getString(("overview"));
+                        movie.setDescription(overview);
                         Log.d("TMDB_"+i, overview);
-
+                        movie.setRating("");
+                        Log.d("TMDB_"+i, movie.toString());
+                        movieList.add(movie);
                     }
                 } else {
                     Log.e("TMDB_", "Error en la API: Código " + responseCode);
@@ -89,7 +105,7 @@ public class TestApiTMDB {
                 }
             }
         });
-        return (ArrayList<String>) genreList;
+        return (ArrayList<Movie>) movieList;
     }
 
 
