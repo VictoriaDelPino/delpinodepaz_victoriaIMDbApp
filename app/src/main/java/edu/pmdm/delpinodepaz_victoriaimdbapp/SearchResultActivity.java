@@ -1,5 +1,7 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,10 +15,14 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiTMDB;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 
 public class SearchResultActivity extends AppCompatActivity {
@@ -29,6 +35,7 @@ public class SearchResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_search_result);
+        DBManager.init(this);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -89,7 +96,33 @@ public class SearchResultActivity extends AppCompatActivity {
 
             @Override
             public void onItemLongClick(Movie movie) {
-                Toast.makeText(SearchResultActivity.this, "Manteniendo: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                // Obtener el usuario actual de Firebase
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (currentUser != null) {
+                    String userEmail = currentUser.getEmail();
+
+                    // Guardar en la base de datos
+                    try {
+                        DBManager.setUserFavorite(userEmail, movie);
+                        Toast.makeText(SearchResultActivity.this, movie.getTitle() + " añadida a favoritos", Toast.LENGTH_SHORT).show();
+
+                        Log.d("Favoritos", "Película guardada: " + movie.getId());
+                    } catch (Exception e) {
+                        Toast.makeText(
+                                SearchResultActivity.this,
+                                "Error al guardar en favoritos",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        Log.e("Favoritos", "Error en DB", e);
+                    }
+                } else {
+                    Toast.makeText(
+                            SearchResultActivity.this,
+                            "Debes iniciar sesión para añadir favoritos",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
             }
         });
 
