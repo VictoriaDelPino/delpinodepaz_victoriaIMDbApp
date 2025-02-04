@@ -1,7 +1,5 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,7 +27,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.TestApiTMDB;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.ActivityMainBinding;
 
@@ -53,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //ApiIMBD.getTop10Movie();
-        TestApiTMDB.getSearchedList("2003","12");
+        //TestApiTMDB.getSearchedList("2003","12");
 
         DBManager.init(this);
 
