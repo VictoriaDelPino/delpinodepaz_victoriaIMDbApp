@@ -62,9 +62,11 @@ public class MovieActivity extends AppCompatActivity {
 
             txtTitle.setText(title);
             txtDescription.setText(description);
-            txtReleaseDate.setText(R.string.released_date+releaseDate);
+            txtReleaseDate.setText(getString(R.string.released_date) +" " + releaseDate);
             if(!ranking.equals("")) {
-                txtRanking.setText(R.string.rating+ranking);
+                txtRanking.setText(getString(R.string.rating) + " " +ranking);
+            }else{
+                txtRanking.setText("");
             }
             imgPhoto.setImageResource(R.drawable.ic_launcher_foreground);
 

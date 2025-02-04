@@ -1,5 +1,7 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,10 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
 
-import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiIMBD;
-import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.ActivityMainBinding;
 
 
@@ -52,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //ApiIMBD.getTop10Movie();
+        //TestApiTMDB.getGenre();
+
+        DBManager.init(this);
+
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -73,8 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)

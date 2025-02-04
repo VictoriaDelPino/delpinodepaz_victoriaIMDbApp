@@ -19,6 +19,9 @@
     <string name="released_date">Estreno: </string>
     <string name="rating">Rating: </string>
 
+    <string name="genre">Genero </string>
+    <string name="share">Compartir </string>
+
 
 
 </resources>

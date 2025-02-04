@@ -1,5 +1,7 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp.ui.home;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +16,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiIMBD;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MovieActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MyItemRecycleViewAdapter;
@@ -34,6 +40,8 @@ public class HomeFragment extends Fragment {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
+        DBManager.init(getContext());
+
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -45,7 +53,9 @@ public class HomeFragment extends Fragment {
 
     private void setupRecyclerView() {
         // Crear lista de películas de prueba
-        movieList = ApiIMBD.getTop10Movie();
+        movieList=new ArrayList<>();
+        movieList.add(new Movie("a","b","https://r-charts.com/es/miscelanea/procesamiento-imagenes-magick_files/figure-html/importar-imagen-r.png","d","e","f"));
+        //movieList = ApiIMBD.getTop10Movie();
         Log.d("Victoria__recyclerview", String.valueOf(movieList.size()));
       /*  movieList.add(new Movie("Inception", "1", "https://image-url.com/inception.jpg","Desc","Sci-Fi","8.8"));
         movieList.add(new Movie("Interstellar", "2", "https://image-url.com/interstellar.jpg","Desc","Sci-Fi","8.6"));
@@ -66,7 +76,37 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onItemLongClick(Movie movie) {
-                Toast.makeText(getContext(), "Manteniendo: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                // Obtener el usuario actual de Firebase
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                if (currentUser != null) {
+                    String userEmail = currentUser.getEmail();
+
+                    // Guardar en la base de datos
+                    try {
+                        DBManager.setUserFavorite(userEmail, movie);
+                        Toast.makeText(
+                                getContext(),
+                                movie.getTitle() + " añadida a favoritos",
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                        Log.d("Favoritos", "Película guardada: " + movie.getId());
+                    } catch (Exception e) {
+                        Toast.makeText(
+                                getContext(),
+                                "Error al guardar en favoritos",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        Log.e("Favoritos", "Error en DB", e);
+                    }
+                } else {
+                    Toast.makeText(
+                            getContext(),
+                            "Debes iniciar sesión para añadir favoritos",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
             }
         });
 
