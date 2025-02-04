@@ -43,7 +43,7 @@ public class TestApiTMDB {
                 connection.setReadTimeout(5000);
 
                 int responseCode = connection.getResponseCode();
-                Log.d("TMDB", "API Response Code: " + responseCode);
+                Log.d("TMDB_", "API Response Code: " + responseCode);
 
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -62,17 +62,26 @@ public class TestApiTMDB {
                      // Iterar sobre los géneros y extraer los nombres
                     for (int i = 0; i < moviesArray.length(); i++) {
                         JSONObject movieObject = moviesArray.getJSONObject(i);
-                        Log.d("TMDB", movieObject.toString());
-                       /* String genreName = genreObject.getString("name");
-                        genreList.add(genreName);
-                        Log.d("TMDB", "Género: " + genreName);*/
+                    //    Log.d("TMDB_", movieObject.toString());
+                        int idMovieInt= movieObject.getInt(("id"));
+                        String idMovie=""+idMovieInt;
+                        Log.d("TMDB_"+i, idMovie);
+                        String titleMovie= movieObject.getString(("title"));
+                        Log.d("TMDB_"+i, titleMovie);
+                        String releaseDate= movieObject.getString(("release_date"));
+                        Log.d("TMDB_"+i, releaseDate);
+                        String posterPath= movieObject.getString(("poster_path"));
+                        Log.d("TMDB_"+i, posterPath);
+                        String overview= movieObject.getString(("overview"));
+                        Log.d("TMDB_"+i, overview);
+
                     }
                 } else {
-                    Log.e("TMDB", "Error en la API: Código " + responseCode);
+                    Log.e("TMDB_", "Error en la API: Código " + responseCode);
                 }
 
             } catch (Exception e) {
-                Log.e("TMDB", "Error en la API: " + e.getMessage(), e);
+                Log.e("TMDB_", "Error en la API: " + e.getMessage(), e);
 
             } finally {
                 if (connection != null) {
