@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 
+//Adaptador del recyclerview
 public class MyItemRecycleViewAdapter extends RecyclerView.Adapter<MyItemRecycleViewAdapter.ViewHolder> {
 
     private List<Movie> movieList;
@@ -30,6 +31,7 @@ public class MyItemRecycleViewAdapter extends RecyclerView.Adapter<MyItemRecycle
     private final ExecutorService executorService = Executors.newFixedThreadPool(4); // Para carga eficiente
 
 
+    //Interfaz para manejar eventos de clic en los elementos de la lista.
     public interface OnItemClickListener {
         void onItemClick(Movie movie);
         void onItemLongClick(Movie movie);
@@ -54,35 +56,22 @@ public class MyItemRecycleViewAdapter extends RecyclerView.Adapter<MyItemRecycle
 
 
         String imageUrl = movie.getPhoto();//String con la url
-        // Asignar una imagen por defecto mientras se carga la imagen real
+        // Asigna una imagen por defecto mientras se carga la imagen real
         holder.imageButton.setImageResource(R.drawable.ic_launcher_foreground);
 
-        // Cargar la imagen en un hilo de fondo
+        // Carga la imagen en un hilo de fondo
         executorService.execute(() -> {
             Bitmap bitmap = downloadImage(imageUrl);
             if (bitmap != null) {
-                holder.imageButton.post(() -> holder.imageButton.setImageBitmap(bitmap)); // Asignar en la UI
+                holder.imageButton.post(() -> holder.imageButton.setImageBitmap(bitmap)); // Asigna en la UI
             }
         });
 
-        // URL de la imagen // Crear un hilo para cargar la imagen de forma asíncrona
-       /* new Thread(() -> {
-            try {
-                System.out.println("Cargando imagen...");
-                // Descargar la imagen
-                URL url = new URL(imageUrl);
-                BufferedImage image = ImageIO.read(url);
-                if (image != null) {
-                    System.out.println("Imagen cargada con éxito: " + image.getWidth() + "x" + image.getHeight());
-                } else {
-                    System.out.println("Error: No se pudo cargar la imagen.");
-                }
-            } catch (Exception e) { System.err.println("Error al cargar la imagen: " + e.getMessage()); }
-        }).start();     */
-        holder.imageButton.setImageResource(R.drawable.ic_launcher_foreground);//asignarlo la imagen cargada
+        //asigna la imagen cargada
+        holder.imageButton.setImageResource(R.drawable.ic_launcher_foreground);
 
 
-        // Manejo de clics
+        // Manejo de clicks en la imagen
         holder.imageButton.setOnClickListener(v -> listener.onItemClick(movie));
 
         holder.imageButton.setOnLongClickListener(v -> {
@@ -91,6 +80,7 @@ public class MyItemRecycleViewAdapter extends RecyclerView.Adapter<MyItemRecycle
         });
     }
 
+    //Método para descargar una imagen desde una URL.
     private Bitmap downloadImage(String urlString) {
         try {
             URL url = new URL(urlString);
@@ -110,6 +100,7 @@ public class MyItemRecycleViewAdapter extends RecyclerView.Adapter<MyItemRecycle
         return movieList.size();
     }
 
+    //Clase ViewHolder que representa cada elemento de la lista.
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageButton imageButton;
 

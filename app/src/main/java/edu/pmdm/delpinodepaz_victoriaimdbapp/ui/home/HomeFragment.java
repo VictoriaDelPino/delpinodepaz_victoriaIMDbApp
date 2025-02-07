@@ -29,6 +29,7 @@ import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MyItemRecycleViewAdapter;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.FragmentHomeBinding;
 
+//Fragmento que muestra el top 10 de películas.
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
@@ -40,35 +41,35 @@ public class HomeFragment extends Fragment {
         HomeViewModel homeViewModel =
                 new ViewModelProvider(this).get(HomeViewModel.class);
 
+        // Inicializa la base de datos con el contexto actual
         DBManager.init(getContext());
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Configurar RecyclerView
+        // Configura el RecyclerView con una lista de películas
         setupRecyclerView();
 
         return root;
     }
 
     private void setupRecyclerView() {
-        // Crear lista de películas de prueba
+        // Crea lista de películas de prueba
         movieList=new ArrayList<>();
         movieList.add(new Movie("a","b","https://r-charts.com/es/miscelanea/procesamiento-imagenes-magick_files/figure-html/importar-imagen-r.png","d","e","f"));
+        //Llama a la API para cargar el top 10 de películas
         //movieList = ApiIMBD.getTop10Movie();
-        Log.d("Victoria__recyclerview", String.valueOf(movieList.size()));
-      /*  movieList.add(new Movie("Inception", "1", "https://image-url.com/inception.jpg","Desc","Sci-Fi","8.8"));
-        movieList.add(new Movie("Interstellar", "2", "https://image-url.com/interstellar.jpg","Desc","Sci-Fi","8.6"));
-        movieList.add(new Movie("The Dark Knight", "3", "https://image-url.com/darkknight.jpg","Desc","Action","9.0"));
-        movieList.add(new Movie("Tenet", "4", "https://image-url.com/tenet.jpg","Desc","Thriller","7.5"));
-*/
-        // Configurar RecyclerView con GridLayoutManager para 2 columnas
+
+        // Configura RecyclerView con GridLayoutManager para 2 columnas
         binding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
+        // Inicializa el adaptador del RecyclerView y define los eventos de click
         adapter = new MyItemRecycleViewAdapter(movieList, getContext(), new MyItemRecycleViewAdapter.OnItemClickListener() {
+
             @Override
             public void onItemClick(Movie movie) {
                 Toast.makeText(getContext(), "Clic en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                // Inicia una nueva actividad para mostrar detalles de la película
                 Intent intent = new Intent(getActivity(), MovieActivity.class);
                 intent.putExtra("movie", movie);
                 startActivity(intent);
@@ -76,13 +77,13 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onItemLongClick(Movie movie) {
-                // Obtener el usuario actual de Firebase
+                // Obtiene el usuario actual autenticado en Firebase
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
                 if (currentUser != null) {
                     String userEmail = currentUser.getEmail();
-
-                    // Guardar en la base de datos
+                    // Intenta guardar la película en la lista de favoritos del usuario
                     try {
                         DBManager.setUserFavorite(userEmail, movie);
                         Toast.makeText(
@@ -91,14 +92,14 @@ public class HomeFragment extends Fragment {
                                 Toast.LENGTH_SHORT
                         ).show();
 
-                        Log.d("Favoritos", "Película guardada: " + movie.getId());
                     } catch (Exception e) {
+                        // Muestra un mensaje de error si ocurre un problema con la base de datos
                         Toast.makeText(
                                 getContext(),
                                 "Error al guardar en favoritos",
                                 Toast.LENGTH_SHORT
                         ).show();
-                        Log.e("Favoritos", "Error en DB", e);
+                        Log.e("Error", "Error en DB", e);
                     }
                 } else {
                     Toast.makeText(
@@ -109,7 +110,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-
+        // Asigna el adaptador al RecyclerView
         binding.recyclerView.setAdapter(adapter);
     }
 

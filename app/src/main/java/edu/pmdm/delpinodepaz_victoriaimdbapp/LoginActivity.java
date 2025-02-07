@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+//Actividad encargada de gestionar el proceso de inicio de sesión con Google mediante Firebase.
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
@@ -29,15 +30,17 @@ public class LoginActivity extends AppCompatActivity {
     private SignInClient oneTapClient;
     private BeginSignInRequest signInRequest;
 
-    // ActivityResultLauncher para manejar resultados
+    //ActivityResultLauncher se encarga de manejar el resultado del intento de inicio de sesión.
     private final ActivityResultLauncher<IntentSenderRequest> signInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartIntentSenderForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     try {
+                        // Obtiene las credenciales devueltas por Google
                         SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
                         String idToken = credential.getGoogleIdToken();
                         if (idToken != null) {
+                            // Inicia sesión en Firebase con el token recibido
                             firebaseAuthWithGoogle(idToken);
                         }
                     } catch (ApiException e) {
@@ -48,15 +51,17 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
 
+    /* Método que se ejecuta al crear la actividad. Inicializa Firebase, configura One Tap Sign-In y
+    establece la acción del botón de inicio de sesión.*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Inicializar Firebase Auth
+        // Inicializa Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Configurar One Tap Sign-In
+        // Configura el cliente de inicio de sesión One Tap de Google
         oneTapClient = Identity.getSignInClient(this);
         signInRequest = BeginSignInRequest.builder()
                 .setGoogleIdTokenRequestOptions(
@@ -67,15 +72,17 @@ public class LoginActivity extends AppCompatActivity {
                                 .build())
                 .build();
 
-        // Botón para iniciar sesión
+        // Asigna el botón de inicio de sesión y define su comportamiento
         Button signInButton = findViewById(R.id.signInButton);
         signInButton.setOnClickListener(v -> startSignIn());
     }
 
+    //Inicia el proceso de autenticación con Google mediante One Tap Sign-In.
     private void startSignIn() {
         oneTapClient.beginSignIn(signInRequest)
                 .addOnSuccessListener(this, result -> {
                     try {
+                        // Obtiene la solicitud de IntentSender para iniciar el flujo de inicio de sesión
                         IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(result.getPendingIntent().getIntentSender()).build();
                         signInLauncher.launch(intentSenderRequest);
                     } catch (Exception e) {
@@ -85,11 +92,13 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnFailureListener(this, e -> Log.e(TAG, "One Tap Sign-In Error: " + e.getMessage()));
     }
 
+    //Autentica al usuario en Firebase con el token de Google obtenido.
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(firebaseCredential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        // Obtiene el usuario autenticado
                         FirebaseUser user = mAuth.getCurrentUser();
                         Log.d(TAG, "signInWithCredential:success, User: " + user.getDisplayName());
                         updateUI(user);
@@ -107,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
         updateUI(currentUser);
     }
 
+    //Actualiza la interfaz de usuario dependiendo de si el usuario está autenticado o no.
     private void updateUI(FirebaseUser user) {
         if (user != null) {
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);

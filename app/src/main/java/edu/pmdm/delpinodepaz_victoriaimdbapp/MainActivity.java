@@ -30,7 +30,7 @@ import java.net.URL;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.ActivityMainBinding;
 
-
+//lase principal de la aplicación que gestiona la navegación y muestra la interfaz principal.
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -49,31 +49,27 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        //ApiIMBD.getTop10Movie();
-        //TestApiTMDB.getSearchedList("2003","12");
-
+        // Inicializa la base de datos local
         DBManager.init(this);
-
-
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setSupportActionBar(binding.appBarMain.toolbar);
 
+        // Obtiene la instancia de Firebase Auth y el usuario actual
         mAuth = FirebaseAuth.getInstance();
-
         currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             // Usuario autenticado
             Log.d("NavigationDrawer", "Usuario: " + currentUser.getEmail());
         } else {
-            // Redirigir al SignInActivity
+            // Si no hay un usuario autenticado, redirige a la pantalla de inicio de sesión
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
 
+        // Configuración del Navigation Drawer
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -84,20 +80,20 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        // Obtiene la vista del encabezado del Navigation Drawer
         View headerView = navigationView.getHeaderView(0);
 
-        // Buscamos el botón dentro del header
+        // Busca y asigna los elementos de la interfaz dentro del header
         btnLogOut = headerView.findViewById(R.id.btnLogOut);
         txtEmail = headerView.findViewById(R.id.txtEmail);
         txtUserName = headerView.findViewById(R.id.txtUserName);
         imgUserPhoto = headerView.findViewById(R.id.imgUserPhoto);
 
+        // Si hay un usuario autenticado, muestra su información
         if(currentUser!=null) {
-            //meter nombre e imagen
-
             txtEmail.setText(currentUser.getEmail());
             txtUserName.setText(currentUser.getDisplayName());
-            // Descargar y establecer la imagen de forma asincrónica
+            // Descarga y establece la imagen del usuario de forma asíncrona
             new Thread(() -> {
                 Bitmap bitmap = downloadImage(currentUser.getPhotoUrl().toString());
                 runOnUiThread(() -> {
@@ -109,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
                 });
             }).start();
         }
+
+        // Configura el botón de cierre de sesión
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /*Método para descargar una imagen desde una URL.
+    Se utiliza para cargar la foto de perfil del usuario.*/
     private Bitmap downloadImage(String urlString) {
         Bitmap bitmap = null;
         try {

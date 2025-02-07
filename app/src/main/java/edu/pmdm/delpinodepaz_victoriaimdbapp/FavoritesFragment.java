@@ -11,10 +11,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+//Clase que representa un fragmento de diálogo para mostrar la lista de películas favoritas en formato json.
 public class FavoritesFragment extends DialogFragment {
     private static final String ARG_JSON = "json_arg";
     private String jsonContent;
 
+    //Crea una nueva instancia del fragmento con los datos proporcionados.
     public static FavoritesFragment newInstance(String jsonContent) {
         FavoritesFragment fragment = new FavoritesFragment();
         Bundle args = new Bundle();
@@ -23,6 +25,7 @@ public class FavoritesFragment extends DialogFragment {
         return fragment;
     }
 
+    //Recupera los argumentos y desactiva la cancelación al tocar fuera del diálogo.
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,21 +35,23 @@ public class FavoritesFragment extends DialogFragment {
         }
     }
 
+    //Método que infla el diseño del fragmento y configura sus elementos.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorites, container, false);
 
-        // Asignar texto al TextView
+        // Obtiene la referencia del TextView donde se mostrarán las películas favoritas
         TextView jsonMoviesFav = view.findViewById(R.id.txtMoviesList);
+        // Asigna el contenido JSON al TextView si está disponible, de lo contrario, muestra un mensaje de error
         if (jsonContent != null) {
             jsonMoviesFav.setText(jsonContent);
         } else {
             jsonMoviesFav.setText("No hay datos disponibles.");
         }
 
-        // Configurar botón de cierre
+        // Obtiene la referencia del botón de cierre y asigna su funcionalidad
         Button btnClose = view.findViewById(R.id.btnClose);
         btnClose.setOnClickListener(v -> dismiss());
 

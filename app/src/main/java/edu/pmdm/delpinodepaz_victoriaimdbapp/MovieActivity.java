@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 
+//Esta actividad muestra los detalle de una película
 public class MovieActivity extends AppCompatActivity {
     private static final int REQUEST_CONTACT_PERMISSION = 100;
     private static final int REQUEST_PICK_CONTACT = 101;
@@ -43,7 +44,7 @@ public class MovieActivity extends AppCompatActivity {
     private String title, releaseDate, description, ranking, urlPhoto;
     private Button btnShare;
     private String selectedPhoneNumber; // Guardar el número del contacto seleccionado
-
+    // Executor para manejar descargas de imágenes en segundo plano
     private final ExecutorService executorServiceMovie = Executors.newFixedThreadPool(4);
 
     @Override
@@ -57,6 +58,7 @@ public class MovieActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Vincula las vistas
         btnShare = findViewById(R.id.btnSMS);
         txtTitle = findViewById(R.id.txtMovieTitle);
         txtDescription = findViewById(R.id.txtDescription);
@@ -64,21 +66,26 @@ public class MovieActivity extends AppCompatActivity {
         txtRanking = findViewById(R.id.txtRating);
         imgPhoto = findViewById(R.id.imgMoviePhoto);
 
+        // Obtiene el objeto Movie desde el intent
         Movie movie = getIntent().getParcelableExtra("movie");
         if (movie != null) {
+            // Asigna datos de la película a variables locales
             title = movie.getTitle();
             description = movie.getDescription();
             releaseDate = movie.getReleaseDate();
             ranking = movie.getRating();
             urlPhoto = movie.getPhoto();
 
+            // Asigna datos a los elementos UI
             txtTitle.setText(title);
             txtDescription.setText(description);
             txtReleaseDate.setText(getString(R.string.released_date) + " " + releaseDate);
             txtRanking.setText(!ranking.equals("") ? getString(R.string.rating) + " " + ranking : "");
 
+            // Imagen por defecto mientras se carga la imagen real
             imgPhoto.setImageResource(R.drawable.ic_launcher_foreground);
 
+            // Descarga imagen en un hilo secundario
             executorServiceMovie.execute(() -> {
                 Bitmap bitmap = downloadImage(urlPhoto);
                 if (bitmap != null) {
@@ -87,12 +94,11 @@ public class MovieActivity extends AppCompatActivity {
             });
         }
 
+        // Configura listener para compartir por SMS
         btnShare.setOnClickListener(view -> checkContactPermission());
     }
 
-    /**
-     * Verifica si tiene permisos de contactos, si no los tiene los solicita.
-     */
+    //Verifica si tiene permisos de contactos, si no los tiene los solicita.
     private void checkContactPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_CONTACT_PERMISSION);
@@ -101,17 +107,13 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Abre la lista de contactos.
-     */
+    //Abre la lista de contactos para que el usuario seleccione uno.
     private void openContactPicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
         startActivityForResult(intent, REQUEST_PICK_CONTACT);
     }
 
-    /**
-     * Maneja la respuesta de la solicitud de permisos y selección de contactos.
-     */
+    //Maneja la respuesta de la solicitud de permisos y selección de contactos.
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -130,9 +132,7 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Maneja el resultado de la selección de un contacto.
-     */
+    //Maneja el resultado de la selección de un contacto.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -144,9 +144,7 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Obtiene el número de teléfono del contacto seleccionado.
-     */
+    //Obtiene el número de teléfono del contacto seleccionado.
     private void retrievePhoneNumber(Uri contactUri) {
         ContentResolver contentResolver = getContentResolver();
         Cursor cursor = contentResolver.query(contactUri, new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER}, null, null, null);
@@ -162,9 +160,8 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Verifica si tiene permiso de enviar SMS, si no lo tiene lo solicita.
-     */
+    /*Verifica si la aplicación tiene permisos para enviar SMS.
+      Si no los tiene, los solicita.*/
     private void checkSmsPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, REQUEST_SMS_PERMISSION);
@@ -173,9 +170,7 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Envía un SMS con la información de la película.
-     */
+    //Envía un SMS con la información de la película.
     private void sendSms() {
         if (selectedPhoneNumber != null) {
             String message = "¡Hola! Te recomiendo esta película:\n" +
@@ -193,9 +188,7 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Descarga una imagen desde una URL.
-     */
+    //Descarga una imagen desde una URL.
     private Bitmap downloadImage(String urlString) {
         try {
             URL url = new URL(urlString);
