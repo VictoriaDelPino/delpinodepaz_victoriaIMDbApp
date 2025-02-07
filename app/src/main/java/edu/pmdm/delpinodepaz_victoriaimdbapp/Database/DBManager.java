@@ -11,21 +11,27 @@ import java.util.List;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 
+/*Clase DBManager que gestiona las operaciones de la base de datos relacionadas con los favoritos del usuario.
+ Proporciona métodos para inicializar la base de datos, obtener favoritos, agregar y eliminar películas favoritas.*/
 public class DBManager {
 
+    // Instancia del helper para manejar la base de datos
     private static DBhelper dBhelper;
 
+    /*Inicializa la instancia de la base de datos.
+    Este método se llama antes de usar cualquier otro método de DBManager.*/
     public static void init(Context context) {
         if (dBhelper == null) {
             dBhelper = DBhelper.getInstance(context);
         }
     }
 
+    // Obtiene la lista de películas favoritas de un usuario específico.
     public static List<Movie> getUserFavorites(String userEmail) {
         List<Movie> movieList = new ArrayList<>();
         SQLiteDatabase db = dBhelper.getReadableDatabase();
 
-        // Query con parámetros seguros
+        // Consulta SQL para obtener las películas favoritas del usuario
         String SQL = "SELECT * FROM favorites WHERE user_id = ?";
 
         try (Cursor cursor = db.rawQuery(SQL, new String[]{userEmail})) {
@@ -39,21 +45,21 @@ public class DBManager {
                 movieList.add(movie);
             }
         } catch (Exception e) {
-            Log.e("Database_", "Error al obtener favoritos", e);
+            Log.e("Error", "Error al obtener favoritos", e);
         }
         return movieList;
     }
 
+    /*Agrega una película a la lista de favoritos de un usuario.
+    Si la película ya existe en la base de datos, no se insertará de nuevo.*/
     public static void setUserFavorite(String userEmail, Movie movie) {
         if (userEmail == null || userEmail.isEmpty() || movie == null) {
             Log.e("Database_", "Datos inválidos para favorito");
             return;
         }
-
         try {
-            // Query con parámetros (?) y sin concatenación
+            // Inserta la película en la tabla de favoritos si no existe
             String SQL = "INSERT OR IGNORE INTO favorites VALUES (?, ?, ?, ?, ?, ?)";
-
             SQLiteDatabase db = dBhelper.getWritableDatabase();
             db.execSQL(SQL, new Object[]{
                     userEmail,
@@ -63,29 +69,27 @@ public class DBManager {
                     movie.getReleaseDate(),
                     movie.getPhoto()
             });
-
-            Log.d("Database_", "Película añadida: " + movie.getTitle());
         } catch (Exception e) {
-            Log.e("Database_", "Error al insertar favorito: " + e.getMessage(), e);
+            Log.e("Error", "Error al insertar favorito: " + e.getMessage(), e);
             throw e;
         }
     }
 
+    //Elimina una película de la lista de favoritos del usuario.
     public static void deleteUserFavorite(Context context, String userEmail, String movieId) {
         SQLiteDatabase db = null;
         try {
             db = dBhelper.getWritableDatabase();
+            // Consulta SQL para eliminar la película favorita del usuario
             String SQL = "DELETE FROM favorites WHERE user_id = ? AND movie_id = ?";
             db.execSQL(SQL, new Object[]{userEmail, movieId});
 
+            // Notifica al usuario que la película ha sido eliminada
             Toast.makeText(context, "Película eliminada de favoritos", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Log.e("Database_", "Error al eliminar favorito", e);
+            Log.e("Error", "Error al eliminar favorito", e);
             Toast.makeText(context, "Error al eliminar la película", Toast.LENGTH_SHORT).show();
-        } finally {
-            if (db != null) {
-                db.close();
-            }
         }
+
     }
 }

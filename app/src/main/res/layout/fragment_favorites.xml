@@ -15,7 +15,7 @@
             android:id="@+id/txtDialogTitle"
             android:layout_width="347dp"
             android:layout_height="45dp"
-            android:text="TextView"
+            android:text="@string/favorite_movies_json_title"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

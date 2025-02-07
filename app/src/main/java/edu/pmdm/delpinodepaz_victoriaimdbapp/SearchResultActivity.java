@@ -1,6 +1,5 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp;
 
-import static java.security.AccessController.getContext;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +24,7 @@ import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiTMDB;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 
+//Actividad que muestra las películas filtrada en la api TMDB
 public class SearchResultActivity extends AppCompatActivity {
 
     private MyItemRecycleViewAdapter adapter;
@@ -43,52 +43,46 @@ public class SearchResultActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Obtener datos del Intent
+        // Obtiene los datos enviados a través del Intent
         Intent intent = getIntent();
         if (intent != null) {
             int genreId = intent.getIntExtra("GENRE_ID", -1);
             String year = intent.getStringExtra("YEAR");
 
+            // Verifica si los datos son válidos antes de realizar la búsqueda
             if (genreId != -1 && year != null) {
-                Log.d("SearchResultActivity", "Recibido Genre ID: " + genreId + ", Año: " + year);
-
-                // Obtener la lista de películas y evitar NullPointerException
+                // Obtiene la lista de películas según los parámetros de búsqueda
                 movieList = ApiTMDB.getSearchedList(year, String.valueOf(genreId));
+                // Si la API devuelve null, inicializa una lista vacía para evitar errores
                 if (movieList == null) {
                     movieList = new ArrayList<>();
-                    Log.e("SearchResultActivity", "API devolvió null, inicializando lista vacía");
                 }
-
-                Log.d("Victoria__recyclerview", "Tamaño de movieList: " + movieList.size());
-
             } else {
-                Log.e("SearchResultActivity", "Datos inválidos recibidos");
                 movieList = new ArrayList<>();
             }
         } else {
-            Log.e("SearchResultActivity", "Intent nulo");
             movieList = new ArrayList<>();
         }
-
+        // Configura el RecyclerView con los datos obtenidos
         setupRecyclerView();
     }
 
     private void setupRecyclerView() {
-        // Inicializar lista si es null (precaución adicional)
+        // Verifica si la lista es null y la inicializa si es necesario
         if (movieList == null) {
             movieList = new ArrayList<>();
         }
 
-        Log.d("Victoria__recyclerview", "Tamaño de movieList: " + movieList.size());
-
-        // Referencia al RecyclerView
+        // Obtiene la referencia del RecyclerView en el layout
         RecyclerView recyclerView = findViewById(R.id.recycleViewSearchResult);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
+        // Crea el adaptador y define el comportamiento de los clics en los elementos
         adapter = new MyItemRecycleViewAdapter(movieList, this, new MyItemRecycleViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Movie movie) {
                 Toast.makeText(SearchResultActivity.this, "Clic en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                // Abre la actividad de detalles de la película
                 Intent intent = new Intent(SearchResultActivity.this, MovieActivity.class);
                 intent.putExtra("movie", movie);
                 startActivity(intent);
@@ -96,25 +90,23 @@ public class SearchResultActivity extends AppCompatActivity {
 
             @Override
             public void onItemLongClick(Movie movie) {
-                // Obtener el usuario actual de Firebase
+                // Obtiene el usuario actual de Firebase
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 if (currentUser != null) {
                     String userEmail = currentUser.getEmail();
 
-                    // Guardar en la base de datos
+                    // Intenta guardar la película en la base de datos
                     try {
                         DBManager.setUserFavorite(userEmail, movie);
                         Toast.makeText(SearchResultActivity.this, movie.getTitle() + " añadida a favoritos", Toast.LENGTH_SHORT).show();
-
-                        Log.d("Favoritos", "Película guardada: " + movie.getId());
                     } catch (Exception e) {
                         Toast.makeText(
                                 SearchResultActivity.this,
                                 "Error al guardar en favoritos",
                                 Toast.LENGTH_SHORT
                         ).show();
-                        Log.e("Favoritos", "Error en DB", e);
+                        Log.e("Error", "Error en DB", e);
                     }
                 } else {
                     Toast.makeText(
@@ -125,7 +117,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 }
             }
         });
-
+        // Asigna el adaptador al RecyclerView
         recyclerView.setAdapter(adapter);
     }
 }

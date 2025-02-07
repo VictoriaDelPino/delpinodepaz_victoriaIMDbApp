@@ -27,6 +27,7 @@ import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Genre;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.SearchResultActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.FragmentSlideshowBinding;
 
+//Fragmento que permite filtar una busqueda de películas por genero y año
 public class SlideshowFragment extends Fragment {
 
     private FragmentSlideshowBinding binding;
@@ -46,22 +47,23 @@ public class SlideshowFragment extends Fragment {
         binding = FragmentSlideshowBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Asigna los elementos de la interfaz a variables
         btnSearch = binding.btnSearch;
         genreSpinner = binding.spinnerGenre;
         txtYear = binding.eTxtYear;
 
-        // Obtener la lista de géneros desde la API
+        // Obtiene la lista de géneros desde la API
         genreObjectList = ApiTMDB.getGenre();
         genreList = new ArrayList<>();
 
-        // Agregar un elemento por defecto como primer elemento de la lista
+        // Agrega un elemento por defecto como primer elemento de la lista de géneros
         genreList.add(0, "Selecciona un género");
         for (Genre genre : genreObjectList) {
             Log.d("TMDB_", genre.getGenreName());
             genreList.add(genre.getGenreName());
         }
 
-        // Configurar el adaptador para el Spinner
+        // Configura el adaptador para el Spinner con la lista de géneros
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_spinner_item,
@@ -70,14 +72,16 @@ public class SlideshowFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         genreSpinner.setAdapter(adapter);
 
-        // Configurar el listener para el Spinner
+        // Configura el listener para detectar la selección de un género en el Spinner
         genreSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Si el usuario selecciona la opción por defecto, se muestra en color gris
                 if (position == 0) {
                     ((TextView) parent.getChildAt(0)).setTextColor(Color.GRAY);
                     selectedGenre = null;
                 } else {
+                    // Busca el objeto Genre correspondiente al nombre seleccionado
                     String selectedGenreName = genreList.get(position);
                     for (Genre g : genreObjectList) {
                         if (g.getGenreName().equals(selectedGenreName)) {
@@ -92,18 +96,21 @@ public class SlideshowFragment extends Fragment {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        // Configurar el botón para iniciar la actividad de búsqueda
+        // Configura el botón para iniciar la búsqueda de películas
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Verifica si el usuario ha seleccionado un género válido
                 if (selectedGenre != null) {
                     try {
+                        // Obtiene y procesa el año ingresado por el usuario
                         year = txtYear.getText().toString().trim();
                         int yearInt = Integer.parseInt(year);
                         int currentYear = java.time.Year.now().getValue();
 
+                        // Verifica si el año ingresado es válido dentro del rango permitido
                         if (yearInt >= 1888 && yearInt <= currentYear) {
-                            // Crear el Intent para iniciar SearchResultActivity
+                            // Crea un Intent para iniciar la actividad de búsqueda con los datos ingresados
                             Intent intent = new Intent(requireContext(), SearchResultActivity.class);
                             intent.putExtra("GENRE_ID", selectedGenre.getId());
                             intent.putExtra("YEAR", year);

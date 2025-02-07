@@ -3,13 +3,15 @@ package edu.pmdm.delpinodepaz_victoriaimdbapp.Movies;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/*Clase Movie que representa una película en la aplicación.
+  Implementa Parcelable para permitir su transferencia entre Activities o Fragments.*/
 public class Movie implements Parcelable {
     private String id;
-    private String photo;         // URL de la carátula
-    private String title;         // Título de la película
-    private String description;   // Descripción de la película
-    private String releaseDate;   // Fecha de estreno
-    private String rating;        // Calificación de la película
+    private String photo;
+    private String title;
+    private String description;
+    private String releaseDate;
+    private String rating;
 
     public Movie() {
     }
