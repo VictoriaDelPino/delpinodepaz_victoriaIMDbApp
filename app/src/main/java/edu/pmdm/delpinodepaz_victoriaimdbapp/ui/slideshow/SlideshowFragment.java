@@ -3,7 +3,6 @@ package edu.pmdm.delpinodepaz_victoriaimdbapp.ui.slideshow;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import java.util.List;
 
 import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiTMDB;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Genre;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.R;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.SearchResultActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.FragmentSlideshowBinding;
 
@@ -57,9 +57,8 @@ public class SlideshowFragment extends Fragment {
         genreList = new ArrayList<>();
 
         // Agrega un elemento por defecto como primer elemento de la lista de géneros
-        genreList.add(0, "Selecciona un género");
+        genreList.add(0, getString(R.string.choose_gerne));
         for (Genre genre : genreObjectList) {
-            Log.d("TMDB_", genre.getGenreName());
             genreList.add(genre.getGenreName());
         }
 
@@ -116,13 +115,13 @@ public class SlideshowFragment extends Fragment {
                             intent.putExtra("YEAR", year);
                             startActivity(intent);
                         } else {
-                            Toast.makeText(requireContext(), "El año debe estar entre 1888 y " + currentYear, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), getString(R.string.year_not_available)+" " + currentYear, Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
-                        Toast.makeText(requireContext(), "Ocurrió un error al procesar el año.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.year_too_long), Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Por favor, selecciona un género válido", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.invalid_genre), Toast.LENGTH_SHORT).show();
                 }
             }
         });

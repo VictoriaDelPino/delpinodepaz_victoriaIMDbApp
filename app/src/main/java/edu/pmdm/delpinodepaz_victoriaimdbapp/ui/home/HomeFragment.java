@@ -1,7 +1,5 @@
 package edu.pmdm.delpinodepaz_victoriaimdbapp.ui.home;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,11 +19,11 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiIMBD;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MovieActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MyItemRecycleViewAdapter;
+import edu.pmdm.delpinodepaz_victoriaimdbapp.R;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.databinding.FragmentHomeBinding;
 
 //Fragmento que muestra el top 10 de películas.
@@ -68,7 +65,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onItemClick(Movie movie) {
-                Toast.makeText(getContext(), "Clic en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Click en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
                 // Inicia una nueva actividad para mostrar detalles de la película
                 Intent intent = new Intent(getActivity(), MovieActivity.class);
                 intent.putExtra("movie", movie);
@@ -88,7 +85,7 @@ public class HomeFragment extends Fragment {
                         DBManager.setUserFavorite(userEmail, movie);
                         Toast.makeText(
                                 getContext(),
-                                movie.getTitle() + " añadida a favoritos",
+                                movie.getTitle() + getString(R.string.save_as_favorite),
                                 Toast.LENGTH_SHORT
                         ).show();
 
@@ -96,7 +93,7 @@ public class HomeFragment extends Fragment {
                         // Muestra un mensaje de error si ocurre un problema con la base de datos
                         Toast.makeText(
                                 getContext(),
-                                "Error al guardar en favoritos",
+                                getString(R.string.error_saving_favorites),
                                 Toast.LENGTH_SHORT
                         ).show();
                         Log.e("Error", "Error en DB", e);
@@ -104,7 +101,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     Toast.makeText(
                             getContext(),
-                            "Debes iniciar sesión para añadir favoritos",
+                            getString(R.string.start_session_to_save_as_favorite),
                             Toast.LENGTH_SHORT
                     ).show();
                 }

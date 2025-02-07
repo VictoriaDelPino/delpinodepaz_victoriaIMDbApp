@@ -81,7 +81,7 @@ public class SearchResultActivity extends AppCompatActivity {
         adapter = new MyItemRecycleViewAdapter(movieList, this, new MyItemRecycleViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Movie movie) {
-                Toast.makeText(SearchResultActivity.this, "Clic en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(SearchResultActivity.this, "Click en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
                 // Abre la actividad de detalles de la película
                 Intent intent = new Intent(SearchResultActivity.this, MovieActivity.class);
                 intent.putExtra("movie", movie);
@@ -99,11 +99,11 @@ public class SearchResultActivity extends AppCompatActivity {
                     // Intenta guardar la película en la base de datos
                     try {
                         DBManager.setUserFavorite(userEmail, movie);
-                        Toast.makeText(SearchResultActivity.this, movie.getTitle() + " añadida a favoritos", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SearchResultActivity.this, movie.getTitle() + getString(R.string.save_as_favorite), Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Toast.makeText(
                                 SearchResultActivity.this,
-                                "Error al guardar en favoritos",
+                                getString(R.string.error_saving_favorites),
                                 Toast.LENGTH_SHORT
                         ).show();
                         Log.e("Error", "Error en DB", e);
@@ -111,7 +111,7 @@ public class SearchResultActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(
                             SearchResultActivity.this,
-                            "Debes iniciar sesión para añadir favoritos",
+                            getString(R.string.start_session_to_save_as_favorite),
                             Toast.LENGTH_SHORT
                     ).show();
                 }

@@ -90,6 +90,5 @@ public class DBManager {
             Log.e("Error", "Error al eliminar favorito", e);
             Toast.makeText(context, "Error al eliminar la película", Toast.LENGTH_SHORT).show();
         }
-
     }
 }

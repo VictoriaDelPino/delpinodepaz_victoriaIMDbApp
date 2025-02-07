@@ -42,8 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtUserName;
     private ImageView imgUserPhoto;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         btnLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Sesión cerrada", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.session_closed), Toast.LENGTH_SHORT).show();
                 mAuth.signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();

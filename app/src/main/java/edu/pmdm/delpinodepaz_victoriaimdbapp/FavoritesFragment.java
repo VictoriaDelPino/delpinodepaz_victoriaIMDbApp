@@ -48,7 +48,7 @@ public class FavoritesFragment extends DialogFragment {
         if (jsonContent != null) {
             jsonMoviesFav.setText(jsonContent);
         } else {
-            jsonMoviesFav.setText("No hay datos disponibles.");
+            jsonMoviesFav.setText(getString(R.string.no_data_available));
         }
 
         // Obtiene la referencia del botón de cierre y asigna su funcionalidad

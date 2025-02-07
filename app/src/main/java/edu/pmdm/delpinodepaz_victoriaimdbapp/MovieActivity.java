@@ -10,7 +10,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -121,13 +120,13 @@ public class MovieActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openContactPicker();
             } else {
-                Toast.makeText(this, "Permiso de contactos requerido", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.permission_requested), Toast.LENGTH_SHORT).show();
             }
         } else if (requestCode == REQUEST_SMS_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 sendSms();
             } else {
-                Toast.makeText(this, "Permiso de SMS denegado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.sms_permission_denied), Toast.LENGTH_SHORT).show();
             }
         }
     }
