@@ -31,7 +31,6 @@ public class ApiIMBD {
         void onOverviewReceived(String overview);
     }
 
-
      /* Método para obtener el top 10 de películas desde la API de IMDb.
      * Se ejecuta en un hilo separado usando un ExecutorService.
      * Devuelve una Lista de las 10 mejores películas.*/

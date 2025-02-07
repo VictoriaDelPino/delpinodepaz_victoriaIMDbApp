@@ -4,8 +4,6 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-
-
  /* Clase DBhelper que gestiona la base de datos SQLite de la aplicación.
   Se utiliza para almacenar las películas favoritas de los usuarios. */
 public class DBhelper extends SQLiteOpenHelper {

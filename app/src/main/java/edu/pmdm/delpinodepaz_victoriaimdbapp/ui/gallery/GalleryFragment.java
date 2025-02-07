@@ -98,9 +98,8 @@ public class GalleryFragment extends Fragment {
             }
         }
         // Si ya se tiene los permisos, se muestra el JSON en el fragmento FavoritesFragment
+        Toast.makeText(getContext(), getString(R.string.bt_permission_granted), Toast.LENGTH_SHORT).show();
         showMovieListJson();
-        Toast.makeText(getContext(), "Permiso de Bluetooth concedido", Toast.LENGTH_SHORT).show();
-
     }
 
     //Maneja el resultado de la solicitud de permisos.
@@ -109,9 +108,9 @@ public class GalleryFragment extends Fragment {
         if (requestCode == REQUEST_BLUETOOTH_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 showMovieListJson();
-                Toast.makeText(getContext(), "Permiso de Bluetooth concedido", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.bt_permission_granted), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "Permiso de Bluetooth denegado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.bt_permission_denied), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -119,7 +118,7 @@ public class GalleryFragment extends Fragment {
     //Convierte la lista de películas en formato JSON y la muestra en un diálogo.
     private void showMovieListJson() {
         if (movieList == null || movieList.isEmpty()) {
-            Toast.makeText(getContext(), "No hay películas para mostrar", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.no_favorite_movies), Toast.LENGTH_SHORT).show();
             return;
         }
         JSONArray jsonArray = new JSONArray();
@@ -136,8 +135,8 @@ public class GalleryFragment extends Fragment {
                 jsonArray.put(movieObj);
             }
         } catch (JSONException e) {
-            Log.e("JSON_", "Error al convertir la lista de películas a JSON", e);
-            Toast.makeText(getContext(), "Error al generar JSON", Toast.LENGTH_SHORT).show();
+            Log.e("ERROR", "Error al convertir la lista de películas a JSON", e);
+            Toast.makeText(getContext(), getString(R.string.error_json), Toast.LENGTH_SHORT).show();
             return;
         }
         // Convierte el array a una cadena y lo muestra en un fragmento de favoritos
@@ -162,7 +161,7 @@ public class GalleryFragment extends Fragment {
             @Override
             public void onItemClick(Movie movie) {
                 movie.setRating("");
-                Toast.makeText(getContext(), "Clic en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Click en: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
                 // Abre la actividad de detalles de la película
                 Intent intent = new Intent(getActivity(), MovieActivity.class);
                 intent.putExtra("movie", movie);
