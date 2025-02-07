@@ -77,7 +77,7 @@ public class DBManager {
 
     //Elimina una película de la lista de favoritos del usuario.
     public static void deleteUserFavorite(Context context, String userEmail, String movieId) {
-        SQLiteDatabase db = null;
+        SQLiteDatabase db;
         try {
             db = dBhelper.getWritableDatabase();
             // Consulta SQL para eliminar la película favorita del usuario
