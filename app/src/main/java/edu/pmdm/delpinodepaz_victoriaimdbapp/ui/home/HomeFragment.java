@@ -52,11 +52,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        // Crea lista de películas de prueba
-        movieList=new ArrayList<>();
-        movieList.add(new Movie("a","b","https://r-charts.com/es/miscelanea/procesamiento-imagenes-magick_files/figure-html/importar-imagen-r.png","d","e","f"));
         //Llama a la API para cargar el top 10 de películas
-        //movieList = ApiIMBD.getTop10Movie();
+        movieList = ApiIMBD.getTop10Movie();
 
         // Configura RecyclerView con GridLayoutManager para 2 columnas
         binding.recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -77,7 +74,6 @@ public class HomeFragment extends Fragment {
             public void onItemLongClick(Movie movie) {
                 // Obtiene el usuario actual autenticado en Firebase
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
 
                 if (currentUser != null) {
                     String userEmail = currentUser.getEmail();
