@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.pmdm.delpinodepaz_victoriaimdbapp.ApiConnection.ApiIMBD;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Database.DBManager;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.MovieActivity;
 import edu.pmdm.delpinodepaz_victoriaimdbapp.Movies.Movie;
@@ -85,7 +86,7 @@ public class HomeFragment extends Fragment {
                         DBManager.setUserFavorite(userEmail, movie);
                         Toast.makeText(
                                 getContext(),
-                                movie.getTitle() + getString(R.string.save_as_favorite),
+                                movie.getTitle() + " "+getString(R.string.save_as_favorite),
                                 Toast.LENGTH_SHORT
                         ).show();
 

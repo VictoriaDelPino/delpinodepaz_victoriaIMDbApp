@@ -99,14 +99,14 @@ public class SearchResultActivity extends AppCompatActivity {
                     // Intenta guardar la película en la base de datos
                     try {
                         DBManager.setUserFavorite(userEmail, movie);
-                        Toast.makeText(SearchResultActivity.this, movie.getTitle() + getString(R.string.save_as_favorite), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SearchResultActivity.this, movie.getTitle() +" "+ getString(R.string.save_as_favorite), Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Toast.makeText(
                                 SearchResultActivity.this,
                                 getString(R.string.error_saving_favorites),
                                 Toast.LENGTH_SHORT
                         ).show();
-                        Log.e("Error", "Error en DB", e);
+                        Log.e("ERROR", "Error en DB", e);
                     }
                 } else {
                     Toast.makeText(

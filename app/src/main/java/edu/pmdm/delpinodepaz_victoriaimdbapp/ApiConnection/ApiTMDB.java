@@ -80,14 +80,13 @@ public class ApiTMDB {
                         genre.setId(genreId);
                         genre.setGenreName(genreName);
                         genreList.add(genre);
-                        Log.d("TMDB", "Género: " + genreName);
                     }
                 } else {
-                    Log.e("TMDB", "Error en la API: Código " + responseCode);
+                    Log.e("ERROR", "Error en la API: Código " + responseCode);
                 }
 
             } catch (Exception e) {
-                Log.e("TMDB", "Error en la API: " + e.getMessage(), e);
+                Log.e("ERROR", "Error en la API: " + e.getMessage(), e);
 
             } finally {
                 if (connection != null) {
