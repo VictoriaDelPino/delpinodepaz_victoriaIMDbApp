@@ -3,6 +3,8 @@ package edu.pmdm.delpinodepaz_victoriaimdbapp.Movies;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 /* Clase Genre que representa un género de película.
  Implementa Parcelable para facilitar el paso de objetos entre Activities o Fragments.*/
 public class Genre implements Parcelable {
@@ -61,6 +63,7 @@ public class Genre implements Parcelable {
         this.id = id;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Genre{" +
